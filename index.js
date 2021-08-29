@@ -88,7 +88,7 @@ app.get("/unauthorized", (req, res) => {
   res.render("unauthorized", {
     title: "Unauthorized user",
     btn: "Go back",
-    logaction: "/register",
+    logaction: "/home",
   });
 });
 
@@ -153,3 +153,6 @@ if (port == null || port == "") {
 app.listen(port, () =>
   console.log(`Server has started`)
 );
+
+
+// https://mighty-basin-35097.herokuapp.com/

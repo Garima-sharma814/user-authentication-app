@@ -49,7 +49,28 @@ h1{
     cursor: pointer;
     text-align: center;
 }
+.btn:hover{
+    color: #a18cff;
+    border: 1px solid #a18cff;
+    background-color: #333333;
 
+}
+
+.btn-primary{
+    padding: 7px;
+    width: 100px;
+    color: #a18cff;
+    border: 1px solid #a18cff;
+    border-radius: 7px;
+    font-size: 18px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary:hover{
+    color: white;
+    background-color: #a18cff;
+}
 a{
     text-decoration: none;
 }
