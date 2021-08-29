@@ -9,7 +9,6 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 
-const port = 80;
 const hostname = "127.0.0.1";
 
 app.set("view engine", "ejs");
@@ -146,6 +145,11 @@ app.post("/", (req, res) => {
   });
 });
 
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+} 
+
 app.listen(port, () =>
-  console.log(`Server is running at http://${hostname}:${port}`)
+  console.log(`Server has started`)
 );
