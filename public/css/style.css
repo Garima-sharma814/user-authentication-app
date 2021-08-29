@@ -53,3 +53,7 @@ h1{
 a{
     text-decoration: none;
 }
+
+form div{
+    margin-bottom: 1rem;
+}
