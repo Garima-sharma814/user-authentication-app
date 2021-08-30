@@ -6,6 +6,8 @@ const ejs = require("ejs");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const _ = require("lodash");
+const fs = require("fs");
 
 const app = express();
 
@@ -60,6 +62,8 @@ app.get("/", (req, res) => {
     title: "Login",
     btn: "Login",
     formaction: "/",
+    email: "Enter your email (optional)",
+    role: "ex. Admin, Client (optional)",
   });
 });
 
@@ -68,13 +72,17 @@ app.get("/register", (req, res) => {
     title: "Register",
     btn: "Sign up",
     formaction: "/register",
+    email: "Enter your email",
+    role: "ex. Admin, Client, Manager",
   });
 });
 
 app.get("/home", (req, res) => {
+  const user = req.user;
   if (req.isAuthenticated()) {
     res.render("home", {
       title: "Home",
+      username: req.user.username,
       btn: "Logout",
       logaction: "/logout",
 
@@ -92,17 +100,27 @@ app.get("/unauthorized", (req, res) => {
   });
 });
 
-app.get("/details", (req,res) =>{
-  users.find({}, function (err, users) {
-      if (err) {
-          console.log(err);
-      } else {
-          res.render("details", { 
-            title: "user data",
-            details: users });
-      }
+app.get("/edit", (req,res) =>{
+  // console.log(res.locals.user);
+  res.render("edit", {
+    title: "Edit",
+    btn: "Edit",
+    formaction: "/edit",
+    name: req.user.username,
   })
-})
+});
+
+app.get("/download", (req, res) =>{
+  users.find({}, (err, users) =>{
+    if(err){
+      console.log(err);
+    } else {
+      const data = JSON.stringify(users);
+      fs.writeFileSync("data.csv", data);
+      res.download("data.csv");
+    }
+  });  
+});
 
 app.get("/logout", (req, res) => {
   req.logout();
@@ -111,6 +129,12 @@ app.get("/logout", (req, res) => {
 
 //All post requests here
 app.post("/register", (req, res) => {
+  const user = new users({
+    name: req.body.username,
+    email: req.body.email,
+    userRole: req.body.role,
+  });
+  user.save();
   users.register(
     { username: req.body.username },
     req.body.password,
@@ -131,7 +155,7 @@ app.post("/", (req, res) => {
     name: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    userRole: req.body.userRole,
+    userRole: req.body.role,
   });
   req.login(user, (err) => {
     if (err) {
@@ -144,6 +168,20 @@ app.post("/", (req, res) => {
     }
   });
 });
+
+app.post("/edit", (req,res)=>{
+  users.updateOne({name: req.body.username},
+    {$set: {name: req.body.username, 
+      email: req.body.email,
+      userRole: req.body.role
+    }}, (err, user)=>{
+    if (err) {
+      console.log(err);
+    } else {
+      res.redirect("/home");
+    }
+  });
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {

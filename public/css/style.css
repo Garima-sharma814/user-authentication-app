@@ -67,6 +67,10 @@ h1{
     text-align: center;
 }
 
+.disable:disabled {
+    background: #dddddd;
+  }
+
 .btn-primary:hover{
     color: white;
     background-color: #a18cff;

@@ -1,7 +1,10 @@
 <%- include("partials/header"); -%>
 <div class="container">
-    <h1>Hi, welcome you are logged in</h1>
-    <a class="btn" href="<%= logaction %>"><%= btn %></a>
+  <h1>Hi, welcome <%= username %> you are logged in</h1>
+  <div>
     <a class="btn-primary" href="/edit">Edit Details</a>
+    <a class="btn-primary" id="disabled" href="/download">Download Report</a>
+  </div>
+  <a class="btn" href="<%= logaction %>"><%= btn %></a>
 </div>
 <%- include("partials/footer"); -%>
