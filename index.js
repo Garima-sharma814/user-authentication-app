@@ -85,7 +85,6 @@ app.get("/home", (req, res) => {
       username: req.user.username,
       btn: "Logout",
       logaction: "/logout",
-
     });
   } else {
     res.redirect("/");
@@ -100,7 +99,7 @@ app.get("/unauthorized", (req, res) => {
   });
 });
 
-app.get("/edit", (req,res) =>{
+app.get("/edit", (req, res) => {
   // console.log(res.locals.user);
   if (req.isAuthenticated()) {
     res.render("edit", {
@@ -114,16 +113,16 @@ app.get("/edit", (req,res) =>{
   }
 });
 
-app.get("/download", (req, res) =>{
-  users.find({}, (err, users) =>{
-    if(err){
+app.get("/download", (req, res) => {
+  users.find({}, (err, users) => {
+    if (err) {
       console.log(err);
     } else {
       const data = JSON.stringify(users);
       fs.writeFileSync("data.csv", data);
       res.download("data.csv");
     }
-  });  
+  });
 });
 
 app.get("/logout", (req, res) => {
@@ -164,37 +163,39 @@ app.post("/", (req, res) => {
   req.login(user, (err) => {
     if (err) {
       console.log(err);
-    }
-    else {
-        passport.authenticate("local",)(req, res, () => {
-            res.redirect("/home"); 
-        });
+    } else {
+      passport.authenticate("local")(req, res, () => {
+        res.redirect("/home");
+      });
     }
   });
 });
 
-app.post("/edit", (req,res)=>{
-  users.updateOne({name: req.body.username},
-    {$set: {name: req.body.username, 
-      email: req.body.email,
-      userRole: req.body.role
-    }}, (err, user)=>{
-    if (err) {
-      console.log(err);
-    } else {
-      res.redirect("/home");
+app.post("/edit", (req, res) => {
+  users.updateOne(
+    { name: req.body.username },
+    {
+      $set: {
+        name: req.body.username,
+        email: req.body.email,
+        userRole: req.body.role,
+      },
+    },
+    (err, user) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/home");
+      }
     }
-  });
-})
+  );
+});
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 3000;
-} 
+  port = 5000;
+}
 
-app.listen(port, () =>
-  console.log(`Server has started`)
-);
-
+app.listen(port, () => console.log(`Server has started`));
 
 // https://mighty-basin-35097.herokuapp.com/

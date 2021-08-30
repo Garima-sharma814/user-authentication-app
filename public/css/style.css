@@ -67,9 +67,9 @@ h1{
     text-align: center;
 }
 
-#disabled{
+/* #disabled{
     display: none;
-}
+} */
 
 .btn-primary:hover{
     color: white;

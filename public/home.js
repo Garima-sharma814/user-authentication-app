@@ -1,5 +1,6 @@
-const btn = document.querySelector('#disabled');
+const btn = document.getElementById('btn');
 
-if(req.body.userRole === 'admin' || req.body.userRole === 'Admin') {
-  btn.display = 'block';
+if(users.userRole === admin){
+    btn.display = 'block';
 }
+
