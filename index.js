@@ -102,12 +102,16 @@ app.get("/unauthorized", (req, res) => {
 
 app.get("/edit", (req,res) =>{
   // console.log(res.locals.user);
-  res.render("edit", {
-    title: "Edit",
-    btn: "Edit",
-    formaction: "/edit",
-    name: req.user.username,
-  })
+  if (req.isAuthenticated()) {
+    res.render("edit", {
+      title: "Edit",
+      btn: "Edit",
+      formaction: "/edit",
+      name: req.user.username,
+    });
+  } else {
+    res.redirect("/unauthorized");
+  }
 });
 
 app.get("/download", (req, res) =>{
