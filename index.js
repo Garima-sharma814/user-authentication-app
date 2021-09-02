@@ -8,6 +8,8 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const _ = require("lodash");
 const fs = require("fs");
+const bcrypt = require("bcryptjs");
+const LocalStrategy = require("passport-local").Strategy;
 
 const app = express();
 
@@ -32,63 +34,94 @@ app.use(passport.session());
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
 // });
-mongoose.connect(process.env.connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose
+  .connect(process.env.connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 
 const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  userRole: String,
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
 });
 
 userSchema.plugin(passportLocalMongoose);
 
-const users = mongoose.model("user", userSchema);
+const User = mongoose.model("user", userSchema);
 
-passport.use(users.createStrategy());
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    User.findOne({ email: email })
+      .then((user) => {
+        if (!user) {
+          return done(null, false, { message: "Email not registered" });
+        }
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+          if (err) throw err;
+          if (isMatch) {
+            return done(null, user);
+          } else {
+            return done(null, false, { message: "Password incorrect" });
+          }
+        });
+      })
+      .catch((err) => console.log(err));
+  })
+);
+// passport.use(users.createStrategy());
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
 });
 
 // All the get requests here
 app.get("/", (req, res) => {
   res.render("login", {
-    title: "Login",
-    btn: "Login",
-    formaction: "/",
-    email: "Enter your email (optional)",
-    role: "ex. Admin, Client (optional)",
+    title: "Login Page",
   });
 });
 
 app.get("/register", (req, res) => {
   res.render("register", {
-    title: "Register",
-    btn: "Sign up",
-    formaction: "/register",
-    email: "Enter your email",
-    role: "ex. Admin, Client, Manager",
+    title: "Register Page",
   });
 });
 
-app.get("/home", (req, res) => {
-  const user = req.user;
-  if (req.isAuthenticated()) {
-    res.render("home", {
-      title: "Home",
-      username: req.user.username,
-      btn: "Logout",
-      logaction: "/logout",
-    });
-  } else {
-    res.redirect("/");
-  }
+app.get("/admin", (req, res) => {
+  // if (req.isAuthenticated()) {
+  res.render("admin");
+  // } else {
+  //   res.redirect("/");
+  // }
+});
+
+app.get("/client", (req, res) => {
+  // if (req.isAuthenticated()) {
+  res.render("client");
+  // } else {
+  //   res.redirect("/unauthorized");
+  // }
 });
 
 app.get("/unauthorized", (req, res) => {
@@ -100,7 +133,6 @@ app.get("/unauthorized", (req, res) => {
 });
 
 app.get("/edit", (req, res) => {
-  // console.log(res.locals.user);
   if (req.isAuthenticated()) {
     res.render("edit", {
       title: "Edit",
@@ -114,13 +146,18 @@ app.get("/edit", (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-  users.find({}, (err, users) => {
-    if (err) {
-      console.log(err);
-    } else {
-      const data = JSON.stringify(users);
-      fs.writeFileSync("data.csv", data);
-      res.download("data.csv");
+  console.log(req.user);
+  User.find({ username: req.user.username }, (err, loggedinUser) => {
+    if (loggedinUser.userRole === "Admin") {
+      User.find({}, (err, users) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const data = JSON.stringify(users);
+          fs.writeFileSync("data.json", data);
+          res.download("data.json");
+        }
+      });
     }
   });
 });
@@ -132,47 +169,82 @@ app.get("/logout", (req, res) => {
 
 //All post requests here
 app.post("/register", (req, res) => {
-  const user = new users({
-    name: req.body.username,
-    email: req.body.email,
-    userRole: req.body.role,
-  });
-  user.save();
-  users.register(
-    { username: req.body.username },
-    req.body.password,
-    (err, user) => {
-      if (err) {
-        console.log(err);
-        res.redirect("/register");
+  const { name, email, password, role } = req.body;
+  let errors = [];
+
+  if (!name || !email || !password || !role) {
+    errors.push({ msg: "Please fill all the required feilds!" });
+  }
+  if (errors.length > 0) {
+    res.render("register", {
+      errors,
+      name,
+      email,
+      password,
+      role,
+    });
+  } else {
+    User.findOne({ email: email }).then((user) => {
+      if (user) {
+        errors.push({ msg: "Email is already registered" });
+        res.render("register", {
+          errors,
+          name,
+          email,
+          password,
+          role,
+        });
+      } else {
+        const newUser = new User({
+          name,
+          email,
+          password,
+          role,
+        });
+        //hash the Password
+        bcrypt.genSalt(10, (err, salt) =>
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) throw err;
+            newUser.password = hash;
+            newUser
+              .save()
+              .then((user) => {
+                var userrole = _.lowerCase(newUser.role);
+                if (userrole === "admin") {
+                  res.render("admin");
+                } else {
+                  res.render("client");
+                }
+              })
+              .catch((err) => console.log(err));
+          })
+        );
       }
-      passport.authenticate("local")(req, res, () => {
-        res.redirect("/home");
-      });
-    }
-  );
+    });
+  }
 });
 
-app.post("/", (req, res) => {
-  const user = new users({
-    name: req.body.username,
-    email: req.body.email,
-    password: req.body.password,
-    userRole: req.body.role,
-  });
-  req.login(user, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      passport.authenticate("local")(req, res, () => {
-        res.redirect("/home");
-      });
+app.post("/", (req, res, next) => {
+  User.findOne({ email: req.body.email }, (err, loggedinUser) => {
+    console.log(loggedinUser);
+    var role = _.lowerCase(loggedinUser.role);
+    console.log(role);
+    if (role === "admin") {
+      passport.authenticate("local", {
+        successRedirect: "/admin",
+        failureRedirect: "/",
+      })(req, res, next);
+    }else{
+      passport.authenticate("local", {
+        successRedirect: "/client",
+        failureRedirect: "/",
+      })(req, res, next);
     }
   });
 });
 
 app.post("/edit", (req, res) => {
-  users.updateOne(
+  User.updateOne(
     { name: req.body.username },
     {
       $set: {

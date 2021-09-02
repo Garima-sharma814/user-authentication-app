@@ -88,3 +88,7 @@ span{
     text-align: center;
     margin: 0 auto;
 }
+
+form{
+    margin-top: 1rem;
+}

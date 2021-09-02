@@ -1,7 +1,41 @@
 <%- include("partials/header"); -%>
 <div class="container">
 	<h1>Sign Up</h1>
-	<%- include("partials/form"); -%>
+    <%- include("partials/messages"); -%>
+    <br>
+	<form action= "/register" method="post">
+        <div style="margin-left: 32px;">
+        <label for="title">Name:</label>
+        <input 
+        type="text" 
+        name="name" 
+        placeholder="Enter your name" 
+        value="<%= typeof name != 'undefined' ? name : '' %>"/>
+        </div>
+        <div style="margin-left: 32px;">
+        <label for="email">Email:</label>
+        <input  
+        type="email" 
+        name="email" 
+        placeholder="Enter your email address"
+        value="<%= typeof email != 'undefined' ? email : '' %>"/>
+        </div>
+        <div>
+        <label for="password">Password:</label>
+        <input 
+        type="password" 
+        placeholder="Enter password" 
+        name="password"
+        value="<%= typeof password != 'undefined' ? password : '' %>"></input></div>
+        <div><label for="userrole">User Role:</label>
+        <input type="text" 
+        placeholder="Ex. Admin, Client, Manager" 
+        name="role"
+        value="<%= typeof role != 'undefined' ? role : '' %>"
+        ></input></div>
+        <br>
+        <button class="btn" type="submit">Sign Up</button>
+    </form>
 	<br />
 	<span style="font-size: 16px">By signing up, you agree to our <a href="/terms-&-conditions" style="text-decoration:none;color:#a18cff;"> Terms of Use</a> and <a href="/privacy-policy" style="text-decoration:none;color:#a18cff;"> Privacy Policy.  </a></span>
 	<hr />
