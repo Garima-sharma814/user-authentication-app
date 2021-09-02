@@ -34,11 +34,10 @@ app.use(passport.session());
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
 // });
-mongoose
-  .connect(process.env.connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+mongoose.connect(process.env.connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -223,6 +222,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/", (req, res, next) => {
+  console.log(req.body);
   User.findOne({ email: req.body.email }, (err, loggedinUser) => {
     console.log(loggedinUser);
     var role = _.lowerCase(loggedinUser.role);
@@ -232,7 +232,7 @@ app.post("/", (req, res, next) => {
         successRedirect: "/admin",
         failureRedirect: "/",
       })(req, res, next);
-    }else{
+    } else {
       passport.authenticate("local", {
         successRedirect: "/client",
         failureRedirect: "/",
