@@ -38,9 +38,7 @@ mongoose
   .connect(process.env.connectionString, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  })
-  .then(console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+  });
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -124,43 +122,43 @@ app.get("/client", (req, res) => {
   // }
 });
 
-app.get("/unauthorized", (req, res) => {
-  res.render("unauthorized", {
-    title: "Unauthorized user",
-    btn: "Go back",
-    logaction: "/home",
-  });
-});
+// app.get("/unauthorized", (req, res) => {
+//   res.render("unauthorized", {
+//     title: "Unauthorized user",
+//     btn: "Go back",
+//     logaction: "/home",
+//   });
+// });
 
-app.get("/edit", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.render("edit", {
-      title: "Edit",
-      btn: "Edit",
-      formaction: "/edit",
-      name: req.user.username,
-    });
-  } else {
-    res.redirect("/unauthorized");
-  }
-});
+// app.get("/edit", (req, res) => {
+//   if (req.isAuthenticated()) {
+//     res.render("edit", {
+//       title: "Edit",
+//       btn: "Edit",
+//       formaction: "/edit",
+//       name: req.user.username,
+//     });
+//   } else {
+//     res.redirect("/unauthorized");
+//   }
+// });
 
-app.get("/download", (req, res) => {
-  console.log(req.user);
-  User.find({ username: req.user.username }, (err, loggedinUser) => {
-    if (loggedinUser.userRole === "Admin") {
-      User.find({}, (err, users) => {
-        if (err) {
-          console.log(err);
-        } else {
-          const data = JSON.stringify(users);
-          fs.writeFileSync("data.json", data);
-          res.download("data.json");
-        }
-      });
-    }
-  });
-});
+// app.get("/download", (req, res) => {
+//   console.log(req.user);
+//   User.find({ username: req.user.username }, (err, loggedinUser) => {
+//     if (loggedinUser.userRole === "Admin") {
+//       User.find({}, (err, users) => {
+//         if (err) {
+//           console.log(err);
+//         } else {
+//           const data = JSON.stringify(users);
+//           fs.writeFileSync("data.json", data);
+//           res.download("data.json");
+//         }
+//       });
+//     }
+//   });
+// });
 
 app.get("/logout", (req, res) => {
   req.logout();
@@ -243,25 +241,25 @@ app.post("/", (req, res, next) => {
   });
 });
 
-app.post("/edit", (req, res) => {
-  User.updateOne(
-    { name: req.body.username },
-    {
-      $set: {
-        name: req.body.username,
-        email: req.body.email,
-        userRole: req.body.role,
-      },
-    },
-    (err, user) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect("/home");
-      }
-    }
-  );
-});
+// app.post("/edit", (req, res) => {
+//   User.updateOne(
+//     { name: req.body.username },
+//     {
+//       $set: {
+//         name: req.body.username,
+//         email: req.body.email,
+//         userRole: req.body.role,
+//       },
+//     },
+//     (err, user) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.redirect("/home");
+//       }
+//     }
+//   );
+// });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
