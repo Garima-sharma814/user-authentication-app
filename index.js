@@ -175,7 +175,6 @@ app.get("/download", (req, res) => {
 app.get("/data", (req, res) => {
   if (req.isAuthenticated()) {
   ContactUser.find({}, (err, allDetails) => {
-    // console.log(allDetails);
     if (err) {
       console.log(err);
     } else {
