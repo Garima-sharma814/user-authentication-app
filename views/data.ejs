@@ -1,0 +1,26 @@
+<%- include("partials/header"); -%>
+<div class="container">
+    <h1>User Data </h1>
+  <hr />
+  <% if(details != null) { %>
+  <table style="width:100%;">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>City</th>
+      <th>Phone</th>
+      <th>Message</th>
+    </tr>
+    <% details.forEach((user) => { %>
+    <tr>
+      <td><%= user.fullname %></td>
+      <td><%= user.email %></td>
+      <td><%= user.city %></td>
+      <td><%= user.phone %></td>
+      <td><%= user.message %></td>
+    </tr>
+    <% }) %>
+  </table>
+  <a class="btn" href="Logout">Logout</a>
+</div>
+<% } %> <%- include("partials/footer"); -%>

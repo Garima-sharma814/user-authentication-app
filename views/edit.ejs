@@ -1,9 +1,9 @@
 <%- include("partials/header"); -%>
 <div class="container">
     <h1>Edit your details here</h1>
-    <form action= "<%= formaction %>" method="POST">
+    <form action= "/edit" method="POST">
         <div style="margin-left: 32px;"><label for="title">Name:</label>
-        <input type="text" name="username" placeholder="<%= name %>" /></div>
+        <input type="text" name="username" placeholder="Enter the name" /></div>
         <div style="margin-left: 32px;"><label for="email">Email:</label>
         <input  type="email" name="email" placeholder="Edit your details here" id="title"/></div>
         <div><label for="password">Password:</label>
@@ -11,7 +11,7 @@
         <div><label for="userrole">User Role:</label>
         <input type="text" placeholder="Edit your details here" name="role"></input></div>
         <br>
-        <button class="btn" type="submit"> <%= btn %></button>
+        <button class="btn" type="submit">Edit</button>
     </form>
     <a class="btn-primary" href="/home">Go back</a>
 </div>

@@ -29,6 +29,11 @@ input{
     border: 1px solid rgb(149, 149, 167);
     border-radius: 3px;
 }
+textarea{
+    padding: 5px;
+    border: 1px solid rgb(149, 149, 167);
+    border-radius: 3px;
+}
 
 h1{
     padding: 2rem;
@@ -49,6 +54,7 @@ h1{
     cursor: pointer;
     text-align: center;
 }
+
 .btn:hover{
     color: #a18cff;
     border: 1px solid #a18cff;
@@ -66,10 +72,6 @@ h1{
     cursor: pointer;
     text-align: center;
 }
-
-/* #disabled{
-    display: none;
-} */
 
 .btn-primary:hover{
     color: white;
@@ -91,4 +93,23 @@ span{
 
 form{
     margin-top: 1rem;
+}
+
+form div{
+    display: flex;
+    justify-content:space-between;
+}
+
+tr > th {
+    border: 1px solid white;
+}
+
+td{
+    border: 1px solid white;
+}
+
+table{
+    margin: 0 auto;
+    width: 90%;
+    border: 1px solid white;
 }

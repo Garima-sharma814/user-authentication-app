@@ -57,10 +57,33 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 });
+const contactSchema = new mongoose.Schema({
+  fullname: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+  },
+});
 
 userSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model("user", userSchema);
+const ContactUser = mongoose.model("contact", contactSchema);
 
 passport.use(
   new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
@@ -81,7 +104,7 @@ passport.use(
       .catch((err) => console.log(err));
   })
 );
-// passport.use(users.createStrategy());
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -106,58 +129,65 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/admin", (req, res) => {
-  // if (req.isAuthenticated()) {
-  res.render("admin");
-  // } else {
-  //   res.redirect("/");
-  // }
+  if (req.isAuthenticated()) {
+    res.render("admin");
+  } else {
+    res.redirect("/unauthorized");
+  }
 });
 
 app.get("/client", (req, res) => {
-  // if (req.isAuthenticated()) {
-  res.render("client");
-  // } else {
-  //   res.redirect("/unauthorized");
-  // }
+  if (req.isAuthenticated()) {
+    res.render("client");
+  } else {
+    res.redirect("/unauthorized");
+  }
 });
 
-// app.get("/unauthorized", (req, res) => {
-//   res.render("unauthorized", {
-//     title: "Unauthorized user",
-//     btn: "Go back",
-//     logaction: "/home",
-//   });
-// });
+app.get("/contact", (req, res) => {
+  res.render("contact");
+});
 
-// app.get("/edit", (req, res) => {
-//   if (req.isAuthenticated()) {
-//     res.render("edit", {
-//       title: "Edit",
-//       btn: "Edit",
-//       formaction: "/edit",
-//       name: req.user.username,
-//     });
-//   } else {
-//     res.redirect("/unauthorized");
-//   }
-// });
+app.get("/unauthorized", (req, res) => {
+  res.render("unauthorized");
+});
 
-// app.get("/download", (req, res) => {
-//   console.log(req.user);
-//   User.find({ username: req.user.username }, (err, loggedinUser) => {
-//     if (loggedinUser.userRole === "Admin") {
-//       User.find({}, (err, users) => {
-//         if (err) {
-//           console.log(err);
-//         } else {
-//           const data = JSON.stringify(users);
-//           fs.writeFileSync("data.json", data);
-//           res.download("data.json");
-//         }
-//       });
-//     }
-//   });
-// });
+app.get("/edit", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("edit");
+  } else {
+    res.redirect("/unauthorized");
+  }
+});
+
+app.get("/download", (req, res) => {
+  ContactUser.find({}, (err, users) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const data = JSON.stringify(users);
+      fs.writeFileSync("users.json", data);
+      res.download("users.json");
+    }
+  });
+});
+
+app.get("/data", (req, res) => {
+  if (req.isAuthenticated()) {
+  ContactUser.find({}, (err, allDetails) => {
+    // console.log(allDetails);
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("data", {
+        details: allDetails,
+      });
+    }
+  });
+}else {
+  res.redirect("/unauthorized");
+}
+});
 
 app.get("/logout", (req, res) => {
   req.logout();
@@ -222,9 +252,9 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/", (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   User.findOne({ email: req.body.email }, (err, loggedinUser) => {
-    console.log(loggedinUser);
+    // console.log(loggedinUser);
     var role = _.lowerCase(loggedinUser.role);
     console.log(role);
     if (role === "admin") {
@@ -241,25 +271,39 @@ app.post("/", (req, res, next) => {
   });
 });
 
-// app.post("/edit", (req, res) => {
-//   User.updateOne(
-//     { name: req.body.username },
-//     {
-//       $set: {
-//         name: req.body.username,
-//         email: req.body.email,
-//         userRole: req.body.role,
-//       },
-//     },
-//     (err, user) => {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         res.redirect("/home");
-//       }
-//     }
-//   );
-// });
+app.post("/contact", (req, res) => {
+  const { fullname, email, city, phone, message } = req.body;
+  const newContact = new ContactUser({
+    fullname,
+    email,
+    city,
+    phone,
+    message,
+  });
+  newContact.save();
+  res.redirect("/contact");
+});
+
+app.post("/edit", (req, res) => {
+  console.log(req.user);
+  User.updateOne(
+    { email: req.body.email },
+    {
+      $set: {
+        name: req.body.username,
+        email: req.body.email,
+        userRole: req.body.role,
+      },
+    },
+    (err, user) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/home");
+      }
+    }
+  );
+});
 
 let port = process.env.PORT;
 if (port == null || port == "") {

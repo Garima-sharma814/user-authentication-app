@@ -1,0 +1,41 @@
+<%- include("partials/header"); -%>
+<div class="container">
+    <h1>Your Detils</h1>
+    <form action= "/contact" method="post">
+        <div>
+            <label for="title">Full-name:</label>
+        <input 
+        type="text" 
+        name="fullname" 
+        placeholder="Enter your name"
+        ></div>
+        <div >
+        <label for="email">Email:</label>
+        <input  
+        type="email" 
+        name="email" 
+        placeholder="Enter your email address"
+        ></div>
+        <div>
+        <label for="city">City:</label>
+        <input 
+        type="text" 
+        placeholder="Enter your city" 
+        name="city"
+        ></input></div>
+        <div><label for="phone">Phone:</label>
+        <input type="number"  
+        placeholder="Enter your phone number" 
+        name="phone"
+        ></input></div>
+        <div><label for="message">Message:</label>
+        <textarea rows="4" cols="22" type="text"  
+        placeholder="Enter the message" 
+        name="message"
+        ></textarea></div>
+        <br>
+        <button class="btn" type="submit">Submit</button>
+    </form>
+    <a class="btn-primary" href="/logout">Logout</a>
+</div>
+<%- include("partials/footer"); -%>
