@@ -21,9 +21,7 @@ npm i
 ```
 
 ```bash
-nodemon index.js
-```
-or
+
 ```bash
 npm start
 ```
