@@ -1,4 +1,6 @@
-# login-registration
+# User Authentication App
+- with complete UI 
+- ejs template engine
 
 ## Requirements
 - Node
