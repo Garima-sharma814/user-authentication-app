@@ -25,5 +25,5 @@ nodemon index.js
 ```
 or
 ```bash
-node index.js
+npm start
 ```
