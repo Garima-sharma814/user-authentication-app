@@ -3,7 +3,7 @@
 	<h1>Sign Up</h1>
     <%- include("partials/messages"); -%>
     <br>
-	<form action= "/register" method="post">
+	<form action= "/users/register" method="POST">
         <div>
         <label for="title">Name:</label>
         <input 
@@ -39,6 +39,6 @@
 	<br />
 	<span style="font-size: 16px">By signing up, you agree to our <a href="/terms-&-conditions" style="text-decoration:none;color:#a18cff;"> Terms of Use</a> and <a href="/privacy-policy" style="text-decoration:none;color:#a18cff;"> Privacy Policy.  </a></span>
 	<hr />
-	<div> Already have an account ?<a href="/" style="text-decoration:none;color:#a18cff;"> Login </a></div>
+	<div> Already have an account ?<a href="/users/login" style="text-decoration:none;color:#a18cff;"> Login </a></div>
 </div>
 <%- include("partials/footer"); -%>

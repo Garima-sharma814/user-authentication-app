@@ -1,8 +1,8 @@
 {
-  "name": "login-registration",
+  "name": "user-authentication-app",
   "version": "1.0.0",
-  "description": "Login/Registration PAge with nodejs",
-  "main": "index.js",
+  "description": "Login/Registration Page with nodejs",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon ."
   },

@@ -1,15 +1,32 @@
 <%- include("partials/header"); -%>
 <div class="container">
     <h1>Edit your details here</h1>
-    <form action= "/edit" method="POST">
-        <div style="margin-left: 32px;"><label for="title">Name:</label>
-        <input type="text" name="username" placeholder="Enter the name" /></div>
-        <div style="margin-left: 32px;"><label for="email">Email:</label>
-        <input  type="email" name="email" placeholder="Edit your details here" id="title"/></div>
+    <form action= "/edit" method="post">
+        <div><label for="title">Actual Email:</label>
+            <input 
+            type="text" 
+            name="existingEmail" 
+            placeholder="Enter the email here" /></div>
+        <div><label for="title">Name:</label>
+        <input type="text" 
+        name="username" 
+        placeholder="Enter the detail" /></div>
+        <div><label for="email">Email:</label>
+        <input 
+        type="email" 
+        name="email" 
+        placeholder="Edit your details here" 
+        /></div>
         <div><label for="password">Password:</label>
-        <input type="password" placeholder="Edit yor details here" name="password"></input></div>
+        <input 
+        type="password" 
+        placeholder="Edit yor details here" 
+        name="password"></input></div>
         <div><label for="userrole">User Role:</label>
-        <input type="text" placeholder="Edit your details here" name="role"></input></div>
+        <input 
+        type="text" 
+        placeholder="Edit your details here" 
+        name="role"></input></div>
         <br>
         <button class="btn" type="submit">Edit</button>
     </form>
