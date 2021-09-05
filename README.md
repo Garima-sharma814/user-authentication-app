@@ -23,7 +23,5 @@ npm i
 ```
 
 ```bash
-
-```bash
 npm start
 ```
